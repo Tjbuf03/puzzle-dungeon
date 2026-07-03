@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -36,11 +37,30 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    //trying my way of detecting stuff
+    
+    public LayerMask hitLayers;
+
     void TryMove(Vector2Int direction)
     {
+
         Vector2Int target = currentCell + direction;
 
-        // Stay inside the grid
+        Vector2 targetPosition = grid.CellToWorld(currentCell + direction);
+
+        Collider2D hit = Physics2D.OverlapBox(targetPosition, Vector2.one * 0.9f, 0f, hitLayers);
+
+        if (hit != null)
+        {
+            TileProperties tile = hit.GetComponent<TileProperties>();
+
+            if (tile != null && !tile.Walkable)
+            {
+                Debug.Log("Wall!");
+                return;
+            }
+        }
+        //// Stay inside the grid
         if (!grid.IsInsideGrid(target))
             return;
 

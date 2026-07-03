@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3428214040116550441}
   - component: {fileID: 1040846329248185666}
-  - component: {fileID: 6218308473187451943}
-  - component: {fileID: 4287953702001277241}
+  - component: {fileID: 5541695733058189401}
+  - component: {fileID: 7090240134311504455}
   m_Layer: 3
-  m_Name: FloorTile
+  m_Name: WallTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.3056603, g: 0.047867533, b: 0.047867533, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -89,7 +89,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &6218308473187451943
+--- !u!61 &5541695733058189401
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -135,7 +135,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &4287953702001277241
+--- !u!114 &7090240134311504455
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -147,4 +147,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d604c91c31463b418e22d71195bc48a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Walkable: 1
+  Walkable: 0
