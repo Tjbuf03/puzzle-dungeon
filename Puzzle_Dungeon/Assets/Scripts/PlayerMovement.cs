@@ -44,11 +44,40 @@ public class PlayerMovement : MonoBehaviour
         if (!grid.IsInsideGrid(target))
             return;
 
+        Vector3 targetWorldPosition = grid.CellToWorld(target);
+
+        // Check if there is a closed door on the target tile
+        Door door = GetObjectAtCell<Door>(targetWorldPosition);
+
+        if (door != null && !door.isOpen)
+        {
+            Debug.Log("The door is closed.");
+            return;
+        }
+
         // Spend one action to move
         if (!ActionManager.Instance.SpendActions(1))
             return;
 
         currentCell = target;
-        transform.position = grid.CellToWorld(currentCell);
+        transform.position = targetWorldPosition;
+
+        // Check if player stepped on a button
+        ButtonTile button = GetObjectAtCell<ButtonTile>(targetWorldPosition);
+
+        if (button != null)
+        {
+            button.PressButton();
+        }
+    }
+
+    private T GetObjectAtCell<T>(Vector3 worldPosition) where T : Component
+    {
+        Collider2D hit = Physics2D.OverlapPoint(worldPosition);
+
+        if (hit == null)
+            return null;
+
+        return hit.GetComponent<T>();
     }
 }
