@@ -27,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Player Interaction")]
     [SerializeField] private bool playerCollisionsEnabled;
     [SerializeField] private bool playerPushEnabled;
+    [SerializeField] private bool allowSharedSpawnCells;
 
     private SpriteRenderer spriteRenderer;
     private bool moving;
@@ -117,7 +118,7 @@ public class PlayerMovement : MonoBehaviour
             PlayerMovement member = PartyMembers[i];
             member.partyIndex = i;
             Vector2Int configuredStart = member.GetConfiguredStartCell(i);
-            member.currentCell = member.FindNearestFreeStartCell(configuredStart, i);
+            member.currentCell = member.ResolveSpawnCell(configuredStart, i);
             member.ApplyCurrentState();
         }
     }
@@ -136,6 +137,17 @@ public class PlayerMovement : MonoBehaviour
             default:
                 return currentCell;
         }
+    }
+
+    // Choose between shared spawns and nearest-free placement for this player slot.
+    private Vector2Int ResolveSpawnCell(Vector2Int desiredCell, int memberIndex)
+    {
+        Vector2Int clampedCell = ClampCellToGrid(desiredCell);
+
+        if (!playerCollisionsEnabled && allowSharedSpawnCells)
+            return clampedCell;
+
+        return FindNearestFreeStartCell(clampedCell, memberIndex);
     }
 
     // Snap the player to the scene and tint it by party slot.
