@@ -10,8 +10,7 @@ public class GridManager : MonoBehaviour
     public GameObject tilePrefab;
     public float tileSize = 1f;
 
-    public GameObject wallPrefab; //wall prefab
-    public GameObject whichPrefab; //just to help test random wall spawns
+
     public Vector2Int GridSize => new Vector2Int(width, height);
 
     private void Start()
@@ -26,14 +25,8 @@ public class GridManager : MonoBehaviour
             for (int x = 0; x < width; x++)
             {
                 Vector2Int cell = new Vector2Int(x, y);
-                int randomNum = Random.Range(0, 3); //random wall test help
-                if(randomNum == 0)
-                {
-                    whichPrefab = wallPrefab;
-                }
-                else { whichPrefab = tilePrefab; }  //random wall test help
                     Instantiate(
-                        whichPrefab,
+                        tilePrefab,
                         CellToWorld(cell),
                         Quaternion.identity,
                         transform);
