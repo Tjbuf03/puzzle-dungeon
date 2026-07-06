@@ -301,6 +301,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 573557330}
   currentCell: {x: 0, y: 0}
+  currentCellP1: {x: 3, y: 3}
+  currentCellP2: {x: 3, y: 3}
+  currentCellP3: {x: 3, y: 4}
 --- !u!212 &182872056
 SpriteRenderer:
   m_ObjectHideFlags: 0

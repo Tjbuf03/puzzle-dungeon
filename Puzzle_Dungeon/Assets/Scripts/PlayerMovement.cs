@@ -12,18 +12,21 @@ public class PlayerMovement : MonoBehaviour
         new Color(0.25f, 0.80f, 0.35f, 1f)
     };
 
-    private static readonly string[] PartyNames = { "Blue", "Red", "Green" }; // Player names
     private static bool partyInitialized;
     private static int activeMemberIndex;
 
     public GridManager grid;
 
-    public Vector2Int currentCell = new Vector2Int(0, 0);
+    [SerializeField] private Vector2Int currentCell = new Vector2Int(0, 0);
 
     [Header("Spawn Cells")] // Serialized start cells for each player
     [SerializeField] private Vector2Int currentCellP1 = new Vector2Int(0, 0);
     [SerializeField] private Vector2Int currentCellP2 = new Vector2Int(1, 0);
     [SerializeField] private Vector2Int currentCellP3 = new Vector2Int(0, 1);
+
+    [Header("Player Interaction")]
+    [SerializeField] private bool playerCollisionsEnabled;
+    [SerializeField] private bool playerPushEnabled;
 
     private SpriteRenderer spriteRenderer;
     private bool moving;
@@ -216,13 +219,49 @@ public class PlayerMovement : MonoBehaviour
         if (!grid.IsInsideGrid(target))
             return;
 
+        List<PlayerMovement> pushChain;
+        if (!TryResolvePlayerCollision(target, direction, out pushChain))
+            return;
+
         if (ActionManager.Instance == null || !ActionManager.Instance.SpendActions(1))
             return;
 
+        if (pushChain != null)
+            ApplyPushChain(pushChain, direction);
+
         moving = true;
-        currentCell = target;
-        transform.position = grid.CellToWorld(currentCell);
+        MoveToCell(target);
         moving = false;
+    }
+
+    // Handle player blocking or pushing before movement is applied.
+    private bool TryResolvePlayerCollision(Vector2Int targetCell, Vector2Int direction, out List<PlayerMovement> pushChain)
+    {
+        pushChain = null;
+
+        if (!playerCollisionsEnabled)
+            return true;
+
+        PlayerMovement blockingPlayer = GetPlayerAtCell(targetCell);
+        if (blockingPlayer == null)
+            return true;
+
+        if (!playerPushEnabled)
+            return false;
+
+        if (!TryBuildPushChain(targetCell, direction, out pushChain))
+            return false;
+
+        return true;
+    }
+
+    // Move this player to a new grid cell.
+    private void MoveToCell(Vector2Int targetCell)
+    {
+        currentCell = targetCell;
+
+        if (grid != null)
+            transform.position = grid.CellToWorld(currentCell);
     }
 
     // Search outward from the configured start cell until a free tile is found.
@@ -286,6 +325,54 @@ public class PlayerMovement : MonoBehaviour
         }
 
         return true;
+    }
+
+    // Build a list of players that must slide forward together for a push.
+    private bool TryBuildPushChain(Vector2Int occupiedCell, Vector2Int direction, out List<PlayerMovement> pushChain)
+    {
+        pushChain = new List<PlayerMovement>();
+
+        Vector2Int searchCell = occupiedCell;
+        while (true)
+        {
+            PlayerMovement occupant = GetPlayerAtCell(searchCell);
+            if (occupant == null)
+                return false;
+
+            pushChain.Add(occupant);
+
+            Vector2Int nextCell = searchCell + direction;
+            if (!grid.IsInsideGrid(nextCell))
+                return false;
+
+            if (GetPlayerAtCell(nextCell) == null)
+                return true;
+
+            searchCell = nextCell;
+        }
+    }
+
+    // Slide pushed players forward from farthest to nearest so they do not overlap.
+    private void ApplyPushChain(List<PlayerMovement> pushChain, Vector2Int direction)
+    {
+        for (int i = pushChain.Count - 1; i >= 0; i--)
+        {
+            PlayerMovement player = pushChain[i];
+            player.MoveToCell(player.currentCell + direction);
+        }
+    }
+
+    // Find the player currently standing on a given cell.
+    private static PlayerMovement GetPlayerAtCell(Vector2Int cell)
+    {
+        for (int i = 0; i < PartyMembers.Count; i++)
+        {
+            PlayerMovement member = PartyMembers[i];
+            if (member != null && member.currentCell == cell)
+                return member;
+        }
+
+        return null;
     }
 
     // Keep a candidate cell inside the current grid bounds.
