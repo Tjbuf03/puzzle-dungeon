@@ -528,7 +528,7 @@ MonoBehaviour:
   currentCellP3: {x: 4, y: 4}
   playerCollisionsEnabled: 1
   playerPushEnabled: 1
-  allowSharedSpawnCells: 1
+  allowSharedSpawnCells: 0
 --- !u!212 &1036154996
 SpriteRenderer:
   m_ObjectHideFlags: 0

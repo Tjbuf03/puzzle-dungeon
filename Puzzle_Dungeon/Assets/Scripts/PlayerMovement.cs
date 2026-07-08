@@ -29,6 +29,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool playerPushEnabled;
     [SerializeField] private bool allowSharedSpawnCells;
 
+    [Header("Rendering")]
+    [SerializeField] private int sortingOrder = 20;
+
     private SpriteRenderer spriteRenderer;
     private bool moving;
     private bool isRegistered;  // Booleans default to false in C#
@@ -39,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         RegisterMember();
+        ApplySortingOrder();
     }
 
     // Build the full 3-player party and assign their starting cells.
@@ -158,6 +162,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (spriteRenderer != null && partyIndex >= 0 && partyIndex < PartyColors.Length)
             spriteRenderer.color = PartyColors[partyIndex];
+
+        ApplySortingOrder();
     }
 
     // Check whether this instance is the currently active party member.
@@ -235,17 +241,16 @@ public class PlayerMovement : MonoBehaviour
         if (!TryResolvePlayerCollision(target, direction, out pushChain))
             return;
 
-        if (ActionManager.Instance == null || !ActionManager.Instance.SpendActions(1))
-            return;
-
-        Vector3 targetWorldPosition = grid.CellToWorld(target);
-
-        Door door = GetObjectAtCell<Door>(targetWorldPosition);
-        if (door != null && !door.isOpen)
+        if (HasClosedDoorAtCell(target))
         {
             Debug.Log("The door is closed.");
             return;
         }
+
+        if (ActionManager.Instance == null || !ActionManager.Instance.SpendActions(1))
+            return;
+
+        Vector3 targetWorldPosition = grid.CellToWorld(target);
 
         if (pushChain != null)
             ApplyPushChain(pushChain, direction);
@@ -254,9 +259,7 @@ public class PlayerMovement : MonoBehaviour
         MoveToCell(target);
         moving = false;
 
-        ButtonTile button = GetObjectAtCell<ButtonTile>(targetWorldPosition);
-        if (button != null)
-            button.PressButton();
+        HandleCellEntry(targetWorldPosition);
     }
 
     // Handle player blocking or pushing before movement is applied.
@@ -287,6 +290,13 @@ public class PlayerMovement : MonoBehaviour
 
         if (grid != null)
             transform.position = grid.CellToWorld(currentCell);
+    }
+
+    private void HandleCellEntry(Vector3 worldPosition)
+    {
+        ButtonTile button = GetObjectAtCell<ButtonTile>(worldPosition);
+        if (button != null)
+            button.PressButton();
     }
 
     // Search outward from the configured start cell until a free tile is found.
@@ -370,6 +380,9 @@ public class PlayerMovement : MonoBehaviour
             if (!grid.IsInsideGrid(nextCell))
                 return false;
 
+            if (HasClosedDoorAtCell(nextCell))
+                return false;
+
             if (GetPlayerAtCell(nextCell) == null)
                 return true;
 
@@ -383,7 +396,9 @@ public class PlayerMovement : MonoBehaviour
         for (int i = pushChain.Count - 1; i >= 0; i--)
         {
             PlayerMovement player = pushChain[i];
-            player.MoveToCell(player.currentCell + direction);
+            Vector2Int targetCell = player.currentCell + direction;
+            player.MoveToCell(targetCell);
+            player.HandleCellEntry(player.grid != null ? player.grid.CellToWorld(targetCell) : player.transform.position);
         }
     }
 
@@ -409,6 +424,24 @@ public class PlayerMovement : MonoBehaviour
         return new Vector2Int(
             Mathf.Clamp(cell.x, 0, grid.width - 1),
             Mathf.Clamp(cell.y, 0, grid.height - 1));
+    }
+
+    private bool HasClosedDoorAtCell(Vector2Int cell)
+    {
+        if (grid == null)
+            return false;
+
+        Vector3 worldPosition = grid.CellToWorld(cell);
+        Door door = GetObjectAtCell<Door>(worldPosition);
+        return door != null && !door.isOpen;
+    }
+
+    private void ApplySortingOrder()
+    {
+        if (spriteRenderer == null)
+            return;
+
+        spriteRenderer.sortingOrder = sortingOrder + Mathf.Max(partyIndex, 0);
     }
 
     private T GetObjectAtCell<T>(Vector3 worldPosition) where T : Component

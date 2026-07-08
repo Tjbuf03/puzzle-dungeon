@@ -13,11 +13,15 @@ public class Door : MonoBehaviour
     public GameObject closedVisual;
     public GameObject openVisual;
 
+    [Header("Rendering")]
+    [SerializeField] private int sortingOrder = 10;
+
     private void Start()
     {
         if (grid != null)
             transform.position = grid.CellToWorld(cell);
 
+        ApplySortingOrder();
         UpdateVisuals();
     }
 
@@ -44,5 +48,12 @@ public class Door : MonoBehaviour
 
         if (openVisual != null)
             openVisual.SetActive(isOpen);
+    }
+
+    private void ApplySortingOrder()
+    {
+        SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+            renderers[i].sortingOrder = sortingOrder;
     }
 }

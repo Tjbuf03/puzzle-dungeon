@@ -16,11 +16,15 @@ public class ButtonTile : MonoBehaviour
     public GameObject unpressedVisual;
     public GameObject pressedVisual;
 
+    [Header("Rendering")]
+    [SerializeField] private int sortingOrder = 10;
+
     private void Start()
     {
         if (grid != null)
             transform.position = grid.CellToWorld(cell);
 
+        ApplySortingOrder();
         UpdateVisuals();
     }
 
@@ -46,5 +50,12 @@ public class ButtonTile : MonoBehaviour
 
         if (pressedVisual != null)
             pressedVisual.SetActive(hasBeenPressed);
+    }
+
+    private void ApplySortingOrder()
+    {
+        SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+            renderers[i].sortingOrder = sortingOrder;
     }
 }
