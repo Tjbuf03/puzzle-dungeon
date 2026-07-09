@@ -10,6 +10,7 @@ public class GridManager : MonoBehaviour
     public GameObject tilePrefab;
     public float tileSize = 1f;
 
+
     public Vector2Int GridSize => new Vector2Int(width, height);
 
     private void Start()
@@ -24,12 +25,11 @@ public class GridManager : MonoBehaviour
             for (int x = 0; x < width; x++)
             {
                 Vector2Int cell = new Vector2Int(x, y);
-
-                Instantiate(
-                    tilePrefab,
-                    CellToWorld(cell),
-                    Quaternion.identity,
-                    transform);
+                    Instantiate(
+                        tilePrefab,
+                        CellToWorld(cell),
+                        Quaternion.identity,
+                        transform);
             }
         }
     }

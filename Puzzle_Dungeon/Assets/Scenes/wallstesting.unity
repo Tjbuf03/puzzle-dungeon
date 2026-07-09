@@ -304,12 +304,6 @@ MonoBehaviour:
   hitLayers:
     serializedVersion: 2
     m_Bits: 8
-  currentCellP1: {x: 3, y: 3}
-  currentCellP2: {x: 3, y: 3}
-  currentCellP3: {x: 3, y: 3}
-  playerCollisionsEnabled: 1
-  playerPushEnabled: 1
-  allowSharedSpawnCells: 1
 --- !u!212 &182872056
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -355,7 +349,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0, g: 0.75253963, b: 1, a: 1}
+  m_Color: {r: 0, g: 1, b: 0.8745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
