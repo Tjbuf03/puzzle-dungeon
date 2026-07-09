@@ -301,15 +301,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 573557330}
   currentCell: {x: 0, y: 0}
-  hitLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  currentCellP1: {x: 3, y: 3}
-  currentCellP2: {x: 3, y: 3}
-  currentCellP3: {x: 3, y: 3}
-  playerCollisionsEnabled: 1
-  playerPushEnabled: 1
-  allowSharedSpawnCells: 1
 --- !u!212 &182872056
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -714,8 +705,6 @@ MonoBehaviour:
   height: 8
   tilePrefab: {fileID: 8448205035154248864, guid: 021bb4c144aa6e745b881bf913fe15b9, type: 3}
   tileSize: 1
-  wallPrefab: {fileID: 8448205035154248864, guid: 9fb07f7e91ed3c941861659bd7829f75, type: 3}
-  whichPrefab: {fileID: 0}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
