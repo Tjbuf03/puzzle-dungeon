@@ -32,14 +32,22 @@ public class PlayerMovement : MonoBehaviour
     [Header("Rendering")]
     [SerializeField] private int sortingOrder = 20;
 
+    private bool moving = false;
+    
+    // ADDED LINE 1: A variable to hold the physics reference
+    private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
-    private bool moving;
+    //private bool moving;
     private bool isRegistered;  // Booleans default to false in C#
     private int partyIndex = -1;
 
     // Cache the renderer and add this player to the party list.
     private void Awake()
     {
+        transform.position = grid.CellToWorld(currentCell);
+        
+        // ADDED LINE 2: Link the variable to the component on startup
+        rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         RegisterMember();
         ApplySortingOrder();
@@ -250,6 +258,9 @@ public class PlayerMovement : MonoBehaviour
         if (ActionManager.Instance == null || !ActionManager.Instance.SpendActions(1))
             return;
 
+        currentCell = target;
+        Vector2 targetPosition = grid.CellToWorld(currentCell);
+        rb.MovePosition(targetPosition);
         Vector3 targetWorldPosition = grid.CellToWorld(target);
 
         if (pushChain != null)
