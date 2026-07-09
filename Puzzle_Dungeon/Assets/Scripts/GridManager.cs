@@ -1,55 +1,64 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class GridManager : MonoBehaviour
 {
-    [Header("Grid Size")]
-    public int width = 5;
-    public int height = 5;
+    public static GridManager Instance { get; private set; }
 
-    [Header("Tile")]
-    public GameObject tilePrefab;
-    public float tileSize = 1f;
+    [Header("References")]
+    [SerializeField] private Grid grid;
+    [SerializeField] private Tilemap floorTilemap;
+    [SerializeField] private Tilemap wallTilemap;
 
-
-    public Vector2Int GridSize => new Vector2Int(width, height);
-
-    private void Start()
+    private void Awake()
     {
-        GenerateGrid();
-    }
-
-    void GenerateGrid()
-    {
-        for (int y = 0; y < height; y++)
+        if (Instance != null && Instance != this)
         {
-            for (int x = 0; x < width; x++)
-            {
-                Vector2Int cell = new Vector2Int(x, y);
-                    Instantiate(
-                        tilePrefab,
-                        CellToWorld(cell),
-                        Quaternion.identity,
-                        transform);
-            }
+            Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
     }
 
-    public bool IsInsideGrid(Vector2Int cell)
+    public Vector3 CellToWorld(Vector3Int cell)
     {
-        return cell.x >= 0 &&
-               cell.x < width &&
-               cell.y >= 0 &&
-               cell.y < height;
+        return grid.GetCellCenterWorld(cell);
     }
 
-    public Vector3 CellToWorld(Vector2Int cell)
+    public Vector3Int WorldToCell(Vector3 worldPosition)
     {
-        float xOffset = (width - 1) * tileSize / 2f;
-        float yOffset = (height - 1) * tileSize / 2f;
+        return grid.WorldToCell(worldPosition);
+    }
 
-        return new Vector3(
-            cell.x * tileSize - xOffset,
-            cell.y * tileSize - yOffset,
-            0);
+    public bool IsWalkable(Vector3Int cell)
+    {
+        // Must have floor
+        if (!floorTilemap.HasTile(cell))
+            return false;
+
+        // Cannot have a wall
+        if (wallTilemap.HasTile(cell))
+            return false;
+
+        return true;
+    }
+
+    public BoundsInt GetBounds()
+    {
+        return floorTilemap.cellBounds;
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            world.z = 0;
+
+            Vector3Int cell = WorldToCell(world);
+
+            Debug.Log(cell + " Walkable: " + IsWalkable(cell));
+        }
     }
 }
