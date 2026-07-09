@@ -3,15 +3,22 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+    
     public GridManager grid;
 
     public Vector2Int currentCell = new Vector2Int(0, 0);
 
     private bool moving = false;
+    
+    // ADDED LINE 1: A variable to hold the physics reference
+    private Rigidbody2D rb;
 
     void Start()
     {
         transform.position = grid.CellToWorld(currentCell);
+        
+        // ADDED LINE 2: Link the variable to the component on startup
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void Update()
@@ -49,6 +56,7 @@ public class PlayerMovement : MonoBehaviour
             return;
 
         currentCell = target;
-        transform.position = grid.CellToWorld(currentCell);
+        Vector2 targetPosition = grid.CellToWorld(currentCell);
+        rb.MovePosition(targetPosition);
     }
 }
