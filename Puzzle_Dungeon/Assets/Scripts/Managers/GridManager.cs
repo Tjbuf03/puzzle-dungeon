@@ -31,7 +31,7 @@ public class GridManager : MonoBehaviour
         return grid.WorldToCell(worldPosition);
     }
 
-    public bool IsWalkable(Vector3Int cell)
+    public bool IsWalkable(Vector3Int cell, PlayerMovement player)
     {
         // Must have floor
         if (!floorTilemap.HasTile(cell))
@@ -40,6 +40,37 @@ public class GridManager : MonoBehaviour
         // Cannot have a wall
         if (wallTilemap.HasTile(cell))
             return false;
+
+        // Check normal doors
+        Door[] doors = Object.FindObjectsByType<Door>(FindObjectsSortMode.None);
+
+        foreach (Door door in doors)
+        {
+            Vector3Int doorCell = WorldToCell(door.transform.position);
+
+            if (doorCell == cell && !door.IsOpen)
+                return false;
+        }
+
+        // Check locked doors
+        LockedDoor[] lockedDoors = Object.FindObjectsByType<LockedDoor>(FindObjectsSortMode.None);
+
+        foreach (LockedDoor lockedDoor in lockedDoors)
+        {
+            Vector3Int doorCell = WorldToCell(lockedDoor.transform.position);
+
+            if (doorCell != cell)
+                continue;
+
+            if (!lockedDoor.IsUnlocked)
+            {
+                lockedDoor.TryUnlock(player);
+
+                // If it is still locked after trying, movement is blocked.
+                if (!lockedDoor.IsUnlocked)
+                    return false;
+            }
+        }
 
         return true;
     }
@@ -59,7 +90,7 @@ public class GridManager : MonoBehaviour
 
             Vector3Int cell = WorldToCell(world);
 
-            Debug.Log($"{cell} Walkable: {IsWalkable(cell)}");
+            Debug.Log($"{cell}");
         }
     }
 }

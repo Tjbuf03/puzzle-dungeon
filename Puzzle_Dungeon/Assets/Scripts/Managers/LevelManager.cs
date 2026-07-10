@@ -1,10 +1,16 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance { get; private set; }
+
+    [Header("UI")]
+    [SerializeField] private GameObject levelCompletePanel;
+
+    private int escapedPlayers;
+    private int totalPlayers;
 
     private bool levelComplete;
 
@@ -19,30 +25,67 @@ public class LevelManager : MonoBehaviour
         Instance = this;
     }
 
+    private void Start()
+    {
+        totalPlayers = FindObjectsByType<PlayerMovement>(FindObjectsSortMode.None).Length;
+
+        if (levelCompletePanel != null)
+            levelCompletePanel.SetActive(false);
+    }
+
     private void Update()
     {
+        if (!levelComplete)
+            return;
+
+        if (Keyboard.current.enterKey.wasPressedThisFrame)
+        {
+            LoadNextLevel();
+        }
+
         if (Keyboard.current.rKey.wasPressedThisFrame)
         {
             RestartLevel();
         }
+
     }
 
-    public void CompleteLevel()
+    public void PlayerEscaped(PlayerMovement player)
     {
-        if (levelComplete)
+        if (!player.gameObject.activeSelf)
             return;
 
-        levelComplete = true;
+        escapedPlayers++;
 
-        Debug.Log("Level Complete!");
+        player.gameObject.SetActive(false);
 
-        // Later:
-        // Load next level
-        // Show victory screen
+        PartyManager.Instance.SelectNextAvailablePlayer();
+
+        if (escapedPlayers >= totalPlayers)
+        {
+            levelComplete = true;
+
+            if (levelCompletePanel != null)
+                levelCompletePanel.SetActive(true);
+        }
+    }
+
+    private void LoadNextLevel()
+    {
+        int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
+
+        if (nextScene >= SceneManager.sceneCountInBuildSettings)
+        {
+            Debug.Log("Game Complete!");
+            return;
+        }
+
+        SceneManager.LoadScene(nextScene);
     }
 
     public void RestartLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
 }

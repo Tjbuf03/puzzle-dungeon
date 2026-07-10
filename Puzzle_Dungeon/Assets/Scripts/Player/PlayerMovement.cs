@@ -12,6 +12,18 @@ public class PlayerMovement : MonoBehaviour
 
     private bool canControl = false;
 
+    private SpriteRenderer spriteRenderer;
+    private PartyMember partyMember;
+
+    private Key carriedKey;
+
+    public bool HasKey => carriedKey != null;
+
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
     private void Start()
     {
         currentCell = GridManager.Instance.WorldToCell(transform.position);
@@ -55,7 +67,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3Int targetCell = currentCell + direction;
 
-        if (!GridManager.Instance.IsWalkable(targetCell))
+        if (!GridManager.Instance.IsWalkable(targetCell, this))
             return;
 
         if (!ActionManager.Instance.SpendActions(1))
@@ -94,6 +106,56 @@ public class PlayerMovement : MonoBehaviour
     public void SetControl(bool enabled)
     {
         canControl = enabled;
+
+        if (spriteRenderer != null)
+        {
+            Color color = spriteRenderer.color;
+            color.a = enabled ? 1f : 0.5f;
+            spriteRenderer.color = color;
+        }
+    }
+
+    public void Initialize(PartyMember member)
+    {
+        partyMember = member;
+
+        switch (partyMember)
+        {
+            case PartyMember.Blue:
+                spriteRenderer.color = new Color(0.2f, 0.45f, 1f);
+                break;
+
+            case PartyMember.Purple:
+                spriteRenderer.color = new Color(0.65f, 0.3f, 0.9f);
+                break;
+
+            case PartyMember.Orange:
+                spriteRenderer.color = new Color(1f, 0.55f, 0.1f);
+                break;
+        }
+    }
+
+    public bool PickUpKey(Key key)
+    {
+        if (carriedKey != null)
+            return false;
+
+        carriedKey = key;
+
+        key.AttachToPlayer(this);
+
+        return true;
+    }
+
+    public bool UseKey()
+    {
+        if (carriedKey == null)
+            return false;
+
+        Destroy(carriedKey.gameObject);
+        carriedKey = null;
+
+        return true;
     }
 
     public void SetPosition(Vector3 position)

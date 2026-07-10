@@ -29,7 +29,7 @@ public class PartyManager : MonoBehaviour
         Debug.Log("PartyManager Start");
 
         SpawnPlayers();
-        SetActivePlayer(0);
+        SetActivePlayer(PartyMember.Blue);
 
     }
 
@@ -41,13 +41,13 @@ public class PartyManager : MonoBehaviour
             return;
 
         if (keyboard.digit1Key.wasPressedThisFrame)
-            SetActivePlayer(0);
+            SetActivePlayer(PartyMember.Blue);
 
         if (keyboard.digit2Key.wasPressedThisFrame)
-            SetActivePlayer(1);
+            SetActivePlayer(PartyMember.Purple);
 
         if (keyboard.digit3Key.wasPressedThisFrame)
-            SetActivePlayer(2);
+            SetActivePlayer(PartyMember.Orange);
     }
 
     private void SpawnPlayers()
@@ -58,23 +58,51 @@ public class PartyManager : MonoBehaviour
         {
             PlayerMovement player = Instantiate(playerPrefab);
 
+            player.Initialize(spawn.Player);
             player.SetPosition(spawn.transform.position);
+
+            if (players.ContainsKey(spawn.Player))
+            {
+                Debug.LogError($"Duplicate spawn for {spawn.Player}!");
+                Destroy(player.gameObject);
+                continue;
+            }
 
             players.Add(spawn.Player, player);
         }
     }
 
-    private void SetActivePlayer(int index)
+    private void SetActivePlayer(PartyMember member)
     {
-        if (index < 0 || index >= players.Count)
+        if (!players.ContainsKey(member))
             return;
 
-        for (int i = 0; i < players.Count; i++)
+        foreach (var player in players)
         {
-            players[i].SetControl(i == index);
+            player.Value.SetControl(player.Key == member);
         }
 
-        activePlayer = index;
+        activePlayer = member;
+    }
+
+    public void SelectNextAvailablePlayer()
+    {
+        foreach (PartyMember member in System.Enum.GetValues(typeof(PartyMember)))
+        {
+            if (!players.ContainsKey(member))
+                continue;
+
+            PlayerMovement player = players[member];
+
+            if (player == null)
+                continue;
+
+            if (!player.gameObject.activeSelf)
+                continue;
+
+            SetActivePlayer(member);
+            return;
+        }
     }
 
     public PlayerMovement ActivePlayer => players[activePlayer];
