@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
-
+using UnityEngine.InputSystem;
 public class GridManager : MonoBehaviour
 {
     public static GridManager Instance { get; private set; }
@@ -51,14 +51,15 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            Vector3 world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            Vector3 world = Camera.main.ScreenToWorldPoint(mousePos);
             world.z = 0;
 
             Vector3Int cell = WorldToCell(world);
 
-            Debug.Log(cell + " Walkable: " + IsWalkable(cell));
+            Debug.Log($"{cell} Walkable: {IsWalkable(cell)}");
         }
     }
 }
