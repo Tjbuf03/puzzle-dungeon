@@ -9,6 +9,9 @@ public class LevelManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject levelCompletePanel;
 
+    [Header("Level")]
+    [SerializeField] private string nextSceneName;
+
     private int escapedPlayers;
     private int totalPlayers;
 
@@ -35,6 +38,14 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
+        // Restart the current level
+        if (Keyboard.current.rKey.wasPressedThisFrame)
+        {
+            RestartLevel();
+            return;
+        }
+
+        // Only allow continuing if the level has been completed
         if (!levelComplete)
             return;
 
@@ -42,12 +53,6 @@ public class LevelManager : MonoBehaviour
         {
             LoadNextLevel();
         }
-
-        if (Keyboard.current.rKey.wasPressedThisFrame)
-        {
-            RestartLevel();
-        }
-
     }
 
     public void PlayerEscaped(PlayerMovement player)
@@ -72,20 +77,18 @@ public class LevelManager : MonoBehaviour
 
     private void LoadNextLevel()
     {
-        int nextScene = SceneManager.GetActiveScene().buildIndex + 1;
-
-        if (nextScene >= SceneManager.sceneCountInBuildSettings)
+        if (string.IsNullOrWhiteSpace(nextSceneName))
         {
-            Debug.Log("Game Complete!");
+            Debug.LogWarning("Next Scene Name has not been assigned!");
             return;
         }
 
-        SceneManager.LoadScene(nextScene);
+        SceneManager.LoadScene(nextSceneName);
     }
 
-    public void RestartLevel()
+    private void RestartLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
 }
