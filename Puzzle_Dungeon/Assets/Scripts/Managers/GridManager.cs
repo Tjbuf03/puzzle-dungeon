@@ -9,6 +9,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Grid grid;
     [SerializeField] private Tilemap floorTilemap;
     [SerializeField] private Tilemap wallTilemap;
+    [SerializeField] private Tilemap actionpickupTilemap;
 
     private void Awake()
     {

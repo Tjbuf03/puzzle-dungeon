@@ -51,4 +51,13 @@ public class ActionManager : MonoBehaviour
         actionBar.maxValue = maxActions;
         actionBar.value = CurrentActions;
     }
+    public void AddActions(int ActionsToAdd)
+    {
+        //Debug.Log("" + CurrentActions);
+        CurrentActions += ActionsToAdd;
+        UpdateUI();
+       // Debug.Log("added actions");
+        //Debug.Log("" + CurrentActions);
+
+    }
 }
