@@ -15,6 +15,8 @@ public class PlayerMovement : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private PartyMember partyMember;
 
+    public PartyMember Member => partyMember;
+
     private Key carriedKey;
 
     public bool HasKey => carriedKey != null;
@@ -76,6 +78,29 @@ public class PlayerMovement : MonoBehaviour
         currentCell = targetCell;
 
         StartCoroutine(SmoothMove(GridManager.Instance.CellToWorld(currentCell)));
+
+        TryPressButtonAtCell(currentCell);
+    }
+
+    private void TryPressButtonAtCell(Vector3Int cell)
+    {
+        Vector3 worldPosition = GridManager.Instance.CellToWorld(cell);
+
+        Collider2D[] hits = Physics2D.OverlapPointAll(worldPosition);
+
+        foreach (Collider2D hit in hits)
+        {
+            ButtonTile button = hit.GetComponent<ButtonTile>();
+
+            if (button == null)
+                button = hit.GetComponentInParent<ButtonTile>();
+
+            if (button != null)
+            {
+                button.TryPressButton(this);
+                return;
+            }
+        }
     }
 
     private IEnumerator SmoothMove(Vector3 targetPosition)
