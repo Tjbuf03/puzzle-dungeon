@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,6 +20,9 @@ public class PlayerMovement : MonoBehaviour
 
     private Key carriedKey;
 
+    // --- TELEPORTER VARIABLE ---
+    private HashSet<GameObject> activeTeleporters = new HashSet<GameObject>();
+
     public bool HasKey => carriedKey != null;
 
     private void Awake()
@@ -34,6 +38,30 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        // 1. Check for Teleport Key Press (X) using the New Input System
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard != null && keyboard.xKey.wasPressedThisFrame && activeTeleporters.Count > 0)
+        {
+            // Grab the portal currently in the set
+            GameObject currentTeleporter = null;
+            foreach (GameObject tele in activeTeleporters)
+            {
+                currentTeleporter = tele;
+                break;
+            }
+
+            if (currentTeleporter != null)
+            {
+                Teleporter teleScript = currentTeleporter.GetComponent<Teleporter>();
+                if (teleScript != null && teleScript.GetDestination() != null)
+                {
+                    SetPosition(teleScript.GetDestination().position);
+                    Debug.Log("Teleported player successfully!");
+                    return;
+                }
+            }
+        }
+
         if (!canControl || isMoving)
             return;
 
@@ -41,6 +69,25 @@ public class PlayerMovement : MonoBehaviour
 
         if (direction != Vector3Int.zero)
             TryMove(direction);
+    } // <--- Update() now correctly ends HERE!
+
+    // --- TELEPORTER TRIGGER DETECTORS ---
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Teleporter") || collision.GetComponent<Teleporter>() != null)
+        {
+            activeTeleporters.Add(collision.gameObject);
+            Debug.Log("Entered teleporter: " + collision.name);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Teleporter") || collision.GetComponent<Teleporter>() != null)
+        {
+            activeTeleporters.Remove(collision.gameObject);
+            Debug.Log("Exited teleporter: " + collision.name);
+        }
     }
 
     private Vector3Int GetInputDirection()
