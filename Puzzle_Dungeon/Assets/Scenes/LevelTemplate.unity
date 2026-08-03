@@ -168,8 +168,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1521119629940255710, guid: 8428f179b221ceb4fa4c1a8e8cef5f61, type: 3}
+      propertyPath: m_Color.b
+      value: 0.03396231
+      objectReference: {fileID: 0}
+    - target: {fileID: 1521119629940255710, guid: 8428f179b221ceb4fa4c1a8e8cef5f61, type: 3}
+      propertyPath: m_Color.g
+      value: 0.6182312
+      objectReference: {fileID: 0}
+    - target: {fileID: 1521119629940255710, guid: 8428f179b221ceb4fa4c1a8e8cef5f61, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1521119629940255710, guid: 8428f179b221ceb4fa4c1a8e8cef5f61, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4441591292788449362, guid: 8428f179b221ceb4fa4c1a8e8cef5f61, type: 3}
       propertyPath: player
@@ -2114,8 +2126,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1521119629940255710, guid: 8428f179b221ceb4fa4c1a8e8cef5f61, type: 3}
-      propertyPath: m_Enabled
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1521119629940255710, guid: 8428f179b221ceb4fa4c1a8e8cef5f61, type: 3}
+      propertyPath: m_Color.g
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1521119629940255710, guid: 8428f179b221ceb4fa4c1a8e8cef5f61, type: 3}
+      propertyPath: m_Color.r
+      value: 0.71657753
+      objectReference: {fileID: 0}
+    - target: {fileID: 1521119629940255710, guid: 8428f179b221ceb4fa4c1a8e8cef5f61, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4441591292788449362, guid: 8428f179b221ceb4fa4c1a8e8cef5f61, type: 3}
       propertyPath: player
@@ -2480,7 +2504,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1521119629940255710, guid: 8428f179b221ceb4fa4c1a8e8cef5f61, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5092249097990504284, guid: 8428f179b221ceb4fa4c1a8e8cef5f61, type: 3}
       propertyPath: m_Name
@@ -4044,6 +4068,7 @@ MonoBehaviour:
   grid: {fileID: 2015021628}
   floorTilemap: {fileID: 493969453}
   wallTilemap: {fileID: 1719613938}
+  actionpickupTilemap: {fileID: 0}
 --- !u!1 &2089734064
 GameObject:
   m_ObjectHideFlags: 0
