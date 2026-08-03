@@ -3028,7 +3028,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14833098ca271f478a1c310c4946c06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destination: {fileID: 0}
+  destination: {fileID: 1679024359}
 --- !u!61 &1640344557
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3106,7 +3106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e14833098ca271f478a1c310c4946c06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destination: {fileID: 0}
+  destination: {fileID: 1640344555}
 --- !u!61 &1679024357
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4340,6 +4340,7 @@ MonoBehaviour:
   grid: {fileID: 2015021628}
   floorTilemap: {fileID: 493969453}
   wallTilemap: {fileID: 1719613938}
+  actionpickupTilemap: {fileID: 0}
 --- !u!1 &2089734064
 GameObject:
   m_ObjectHideFlags: 0
