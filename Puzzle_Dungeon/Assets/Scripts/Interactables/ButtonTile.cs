@@ -6,6 +6,7 @@ public class ButtonTile : Interactable
     [SerializeField] private string targetDoorID;
 
     [Header("Player Requirement")]
+    [SerializeField] private bool requireSpecificPlayer = false;
     [SerializeField] private PartyMember requiredPlayer;
 
     private bool pressed;
@@ -15,7 +16,8 @@ public class ButtonTile : Interactable
         if (pressed)
             return;
 
-        if (player.Member != requiredPlayer)
+        // Only check the player's color if this button requires one
+        if (requireSpecificPlayer && player.Member != requiredPlayer)
         {
             Debug.Log($"Wrong player. This button requires {requiredPlayer}, but {player.Member} stepped on it.");
             return;
@@ -25,6 +27,6 @@ public class ButtonTile : Interactable
 
         InteractionManager.Instance.ActivateDoor(targetDoorID);
 
-        Debug.Log($"{requiredPlayer} pressed button for {targetDoorID}");
+        Debug.Log($"Button pressed for {targetDoorID}");
     }
 }
