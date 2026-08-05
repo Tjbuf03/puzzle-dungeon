@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class PartyManager : MonoBehaviour
 {
@@ -60,6 +61,23 @@ public class PartyManager : MonoBehaviour
 
             player.Initialize(spawn.Player);
             player.SetPosition(spawn.transform.position);
+
+            TMP_Text playerText = player.GetComponentInChildren<TMP_Text>();
+            if (playerText != null)
+            {
+                switch (spawn.Player)
+                {
+                    case PartyMember.Blue:
+                        playerText.text = "1";
+                        break;
+                    case PartyMember.Purple:
+                        playerText.text = "2";
+                        break;
+                    case PartyMember.Orange:
+                        playerText.text = "3";
+                        break;
+                }
+            }
 
             if (players.ContainsKey(spawn.Player))
             {
