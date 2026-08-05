@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Teleporter : MonoBehaviour
+public class Teleporter : Interactable
 {
     [SerializeField] private Transform destination;
 
